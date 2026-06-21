@@ -1544,7 +1544,6 @@
 			// 快捷问题
 		onQuickQuestion(e) {
 			const q = e.currentTarget.dataset.q
-			console.error('===============onQuickQuestion==========', q)
 			this.chatInput = q
 			this.canSend = !!q.trim() && !this.chatLoading
 				this.sendChat()
