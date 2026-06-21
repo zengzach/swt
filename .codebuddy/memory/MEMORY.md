@@ -20,3 +20,16 @@ uni-app 编译微信小程序时，模板中**直接给事件传字符串参数*
 - 流式高频 delta 场景应关闭 `scroll-with-animation`，否则卡顿。
 - scroll-view 是原生组件自管滚动，CSS `overflow-y: auto` 会冲突，不要加。
 - 已在 pages/index/index.vue 智能问答对话框应用此方案。
+
+## 智能问答数据库操作优化（2026-06-21）
+- **问题**：一次问答约 22 次数据库操作（4 次云函数调用），且草稿保存的竞态条件导致重复消息。
+- **方案**：新建 `saveChatRound` 云函数，合并用户消息+AI消息+线程更新+消息计数为一次调用；移除流式过程中的草稿保存逻辑。
+- **改动文件**：`cloudfunctions/saveChatRound/index.js`（新建）、`pages/index/index.vue`（移除草稿变量和保存逻辑，RUN_FINISHED 改用 saveChatRound）。
+- **效果**：数据库操作从 ~22 次降至 ~7 次，云函数调用从 4 次降至 2 次（saveChatRound + saveChatLog 异步）。
+- 旧云函数 `saveChatMessage`、`updateMsgCount` 前端已不再调用，保留在云端未删除。
+
+## 云函数部署方式（重要）
+- **微信云开发环境**（envId 格式 `cloud1-xxx`）不能用 `tcb fn deploy --force` 创建新函数，报 `CreateFunction runtime参数错误`。
+- **已有函数更新代码**：用 `tcb fn code update <name> --env-id <envId> --dir ./cloudfunctions/<name>` 即可。
+- **新建函数**：用 CloudBase MCP 工具 `manageFunctions`（action=createFunction, functionRootPath 指向 cloudfunctions 目录），支持 `Nodejs18.15` 等 runtime。
+- 云开发环境：`cloud1-d1gdmvmst507ae4d9`（ap-shanghai）。

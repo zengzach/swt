@@ -1618,10 +1618,6 @@
 
 					// 4. 使用 wx.cloud.extend.AI.bot.sendMessage 调用 Agent
 					let aiText = ''
-					let draftMessageId = ''  // 草稿消息的 ID，用于更新
-					let lastSaveLength = 0    // 上次保存时的 aiText 长度
-					let lastSaveTime = 0      // 上次保存的时间戳
-					let isSavingDraft = false // 是否正在保存草稿，避免并发
 
 					// 添加 AI 占位消息（先显示等待提示）
 				const aiMsg = {
@@ -1689,41 +1685,13 @@
 							}
 							
 							switch (data.type) {
-							case 'TEXT_MESSAGE_CONTENT':
-								aiText += data.delta
-								this.chatMessages[idx].content = aiText
-								this.chatLoading = false
-						this.scrollToMsg = ''
-						this.$nextTick(() => { this.scrollToMsg = 'msg-' + idx })
-							
-								// 定期保存草稿：每 100 个字符或每 3 秒保存一次
-								const now = Date.now()
-								const charCount = aiText.length
-								const shouldSave = !isSavingDraft && ((charCount - lastSaveLength >= 100) || (now - lastSaveTime >= 3000 && charCount > lastSaveLength))
-								if (shouldSave && userMsg.content) {
-								isSavingDraft = true
-								lastSaveLength = charCount
-								lastSaveTime = now
-								// 异步保存，不阻塞 UI
-								wx.cloud.callFunction({
-									name: 'saveChatMessage',
-									data: {
-									threadId: threadId,
-									role: 'assistant',
-									content: aiText,
-									messageId: draftMessageId || undefined
-									}
-								}).then(res => {
-									if (res.result && res.result.success && res.result.messageId) {
-									draftMessageId = res.result.messageId
-									}
-								}).catch(err => {
-									console.error('[saveChatMessage] 草稿保存失败:', err)
-								}).finally(() => {
-									isSavingDraft = false
-								})
-								}
-								break
+						case 'TEXT_MESSAGE_CONTENT':
+							aiText += data.delta
+							this.chatMessages[idx].content = aiText
+							this.chatLoading = false
+					this.scrollToMsg = ''
+					this.$nextTick(() => { this.scrollToMsg = 'msg-' + idx })
+							break
 							case 'RUN_ERROR':
 								console.error('[智能问答] 流式响应错误:', data.message)
 								// 检测 503 类错误，触发重试
@@ -1739,56 +1707,39 @@
 								aiSuccess = true // 标记结束，不再重试
 								}
 								break
-							case 'RUN_FINISHED':
-								// 流式结束，保存消息到数据库
-								if (userMsg.content && aiText) {
-								const currentThreadId = this.chatThreadId
+						case 'RUN_FINISHED':
+							// 流式结束，保存消息到数据库
+							if (userMsg.content && aiText) {
+							const currentThreadId = this.chatThreadId
 
-								// 第一优先级：保存对话消息到数据库（关键，失败要提示用户）
-								try {
-									// 保存用户消息（新增）
-									await wx.cloud.callFunction({
-									name: 'saveChatMessage',
-									data: { threadId: currentThreadId, role: 'user', content: userMsg.content }
-									})
-									// 保存 AI 消息（如果草稿已保存则更新，否则新增）
-									const aiSaveRes = await wx.cloud.callFunction({
-									name: 'saveChatMessage',
-									data: { threadId: currentThreadId, role: 'assistant', content: aiText, messageId: draftMessageId || undefined }
-									})
-									// 更新 draftMessageId（如果需要）
-									if (aiSaveRes.result && aiSaveRes.result.messageId) {
-									draftMessageId = aiSaveRes.result.messageId
-									}
-								} catch (err) {
-									console.error('[saveChatMessage] 保存消息失败', err)
-									uni.showToast({ title: '消息保存失败，请检查网络', icon: 'none' })
+							// 一次调用保存：用户消息 + AI消息 + 线程更新 + 消息计数（关键，失败要提示用户）
+							try {
+								await wx.cloud.callFunction({
+								name: 'saveChatRound',
+								data: {
+									threadId: currentThreadId,
+									userContent: userMsg.content,
+									aiContent: aiText
 								}
-
-								// 第二优先级：审计日志 + 统计（并行发起，等待结果，失败不提示用户）
-								const [logResult, countResult] = await Promise.allSettled([
-									wx.cloud.callFunction({
-									name: 'saveChatLog',
-									data: { question: userMsg.content, answer: aiText }
-									}),
-									wx.cloud.callFunction({
-									name: 'updateMsgCount'
-									})
-								])
-								if (logResult.status === 'rejected') {
-									console.error('[saveChatLog] 保存失败', logResult.reason)
-								}
-								if (countResult.status === 'rejected') {
-									console.error('[updateMsgCount] 更新失败', countResult.reason)
-								}
-
-							// 显示新对话按钮
-							this.showNewChatBtn = true
-							// 获取追问建议（非关键，异步不阻塞主流程）
-							this._fetchRecommendQuestions(idx, userMsg.content, aiText, historyMessages)
+								})
+							} catch (err) {
+								console.error('[saveChatRound] 保存消息失败', err)
+								uni.showToast({ title: '消息保存失败，请检查网络', icon: 'none' })
 							}
-							aiSuccess = true // 成功完成
-								break
+
+							// 审计日志（非关键，异步不阻塞主流程）
+							wx.cloud.callFunction({
+								name: 'saveChatLog',
+								data: { question: userMsg.content, answer: aiText }
+							}).catch(err => console.error('[saveChatLog] 保存失败', err))
+
+						// 显示新对话按钮
+						this.showNewChatBtn = true
+						// 获取追问建议（非关键，异步不阻塞主流程）
+						this._fetchRecommendQuestions(idx, userMsg.content, aiText, historyMessages)
+						}
+						aiSuccess = true // 成功完成
+							break
 							}
 
 							// 如果检测到需要重试，跳出 eventStream 循环

@@ -1,0 +1,9 @@
+{
+  "name": "saveChatRound",
+  "version": "1.0.0",
+  "description": "保存一轮完整对话（用户消息+AI消息+线程更新+消息计数），合并数据库操作",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

@@ -56,6 +56,15 @@
       "memorySize": 256,
       "installDependency": true,
       "handler": "index.main"
+    },
+    {
+      "name": "saveChatRound",
+      "timeout": 10,
+      "envVariables": {},
+      "runtime": "Nodejs18.15.0",
+      "memorySize": 256,
+      "installDependency": true,
+      "handler": "index.main"
     }
   ]
 }
