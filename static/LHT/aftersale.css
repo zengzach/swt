@@ -1,0 +1,22 @@
+
+.btn_icon {
+	width: 80upx;
+	height: 80upx;
+	margin-left: 328upx;
+	background-image: var(--sale-img1);
+	background-size: 100% 100%;
+}
+
+.btn_icon2 {
+	width: 40upx;
+	height: 40upx;
+	background-image: var(--sale-img2);
+	background-size: 100% 100%;
+}
+
+.emailimage_icon {
+	width: 40upx;
+	height: 40upx;
+	background-image: var(--sale-img3);
+	background-size: 100% 100%;
+}

@@ -1,0 +1,27 @@
+.pathway {
+	height: 80upx;
+	width: 600upx;
+	/* background: var(--login-move); */
+	border-radius: 80upx;
+	position: relative;
+	overflow: hidden;
+}
+
+movable-view {
+	height: 100%;
+	width: 100rpx;
+	box-sizing: border-box;
+	background-color: #fff;
+	border: #dddddd solid 1upx;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 100%;
+	border-radius: 80upx;
+	/* background-image: var(--login-img); */
+}
+
+movable-view.active {
+	/* border: var(--index-border); */
+	border-radius: 80upx;
+	/* background-image:  var(--login-img); */
+}

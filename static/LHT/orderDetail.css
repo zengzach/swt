@@ -1,0 +1,68 @@
+.orderDetailStatus {
+	width: 136upx;
+	margin: 0 auto;
+}
+
+.orderImage {
+	width: 56upx;
+	height: 56upx;
+	margin: 0 36upx 10upx 40upx;
+	/* background-image:var(--finish-order) ; */
+	background-size: 100% 100%;
+}
+.orderImage2 {
+	width: 56upx;
+	height: 56upx;
+	margin: 0 36upx 10upx 40upx;
+	/* background-image:var(--detail-order) ; */
+	background-size: 100% 100%;
+}
+.orderImage3 {
+	width: 56upx;
+	height: 56upx;
+	margin: 0 36upx 10upx 40upx;
+	/* background-image:var(--running-order) ; */
+	background-size: 100% 100%;
+}
+.orderImage4 {
+	width: 56upx;
+	height: 56upx;
+	margin: 0 36upx 10upx 40upx;
+	/* background-image:var(--returnOrder-two) ; */
+	background-size: 100% 100%;
+}
+
+.views {
+	width: 160upx;
+	font-size: 32upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	/* color: var(--login-checkbox); */
+}
+.IntegralOrderImage{
+	width: 56upx;
+	height: 56upx;
+	margin: 0 36upx 10upx 40upx;
+	/* background-image:var(--finish-order); */
+	background-size: 100% 100%;
+}
+.views2{
+	width: 160upx;
+	font-size: 32upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	/* color: var(--login-checkbox); */
+}
+.pay{
+	width: 164upx;
+	height: 64upx;
+	border-radius: 30upx;
+	text-align: center;
+	line-height: 64upx;
+	margin-top: 19upx;
+	margin-left: 20upx;
+	font-size: 26upx;
+	/* background: var(--cart-btn); */
+	color: #FFFFFF;
+	border: none;
+}

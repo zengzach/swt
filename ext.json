@@ -1,0 +1,18 @@
+{
+	"extEnable": false,
+	"extAppid": "wxf52f8a28b5960d43",
+	"directCommit": false,
+	"ext": {
+		"appId": "wxf52f8a28b5960d43",
+		"orgNum": "swt2400",
+		"baseUrl": "",
+		"secret": "e2c56c04d7ea4f488159766913cdc07b",
+		"attr": {
+			"host": "open.weixin.qq.com",
+			"users": [
+				"user_1",
+				"user_2"
+			]
+		}
+	}
+}

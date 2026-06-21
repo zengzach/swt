@@ -1,0 +1,55 @@
+.pay_btn {
+	width: 179upx;
+	height: 70upx;
+	/* background: var(--cart-btn);; */
+	border-radius: 35upx;
+	font-size: 28upx;
+	font-family: PingFang SC;
+	font-weight: 400;
+	color: #FFFFFF;
+	text-align: center;
+	line-height: 70upx;
+	margin-left: 30upx;
+}
+
+.pay_btn2 {
+	width: 179upx;
+	height: 70upx;
+	/* background: var(--cart-btn);; */
+	border-radius: 35upx;
+	font-size: 28upx;
+	font-family: PingFang SC;
+	font-weight: 400;
+	color: #FFFFFF;
+	text-align: center;
+	line-height: 70upx;
+	margin-left: 30upx;
+}
+
+navigator {
+	width: 424upx;
+	height: 70upx;
+	border-radius: 35upx;
+	/* background: var(--cart-btn);; */
+	font-size: 28upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+	line-height: 68upx;
+	text-align: center;
+	margin-top: 148upx;
+}
+
+.image1 {
+	width: 86upx;
+	height: 86upx;
+	/* background: var(--cart-noGoods); */
+	background-size: 100% 100%;
+}
+
+.warehouse-icon {
+	width: 40upx;
+	height: 40upx;
+	/* background: var(--cart-warehouse); */
+	background-size: 100% 100%;
+}

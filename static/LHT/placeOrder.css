@@ -1,0 +1,42 @@
+.place_order_img{
+	width: 86upx;
+	height: 74upx;
+	margin-top: 18upx;
+	margin-left: 15upx;
+	/* background: var(--placeOrder-bg); */
+	/* 公共 */
+	/* background: url(https://oss-sp-data.oss-cn-hangzhou.aliyuncs.com/img/wx/publicIcon/submitOrder.png); */
+	background-size: 100% 100%;
+}
+.place_order_two_tips {
+	width: 630upx;
+	padding: 0upx 0upx 30upx 0upx;
+	margin-top: 20upx;
+	/* background: var(--placeOrder-rgb) ; */
+	border-radius: 15upx;
+	display: flex;
+	align-items: flex-start;
+}
+
+.place_order_two_tips .image {
+	width: 29upx;
+	height: 29upx;
+	padding: 0;
+	margin: 32upx 20upx 0 23upx;
+	/* background: var(--placeOrder-icon); */
+	background-size: 100% 100%;
+}
+
+.place_order_two_top {
+	margin-top: 30upx;
+	width: 546upx;
+
+}
+
+.place_order_two_tips view {
+	font-size: 22upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	/* color: var(--login-checkbox); */
+	line-height: 36upx;
+}

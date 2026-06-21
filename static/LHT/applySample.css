@@ -1,0 +1,38 @@
+.confirm_Btns {
+	width: calc(100% - 60upx);
+	height: 70upx;
+	margin: 80upx auto 0;
+	/* background: var(--cart-btn); */
+	border-radius: 35upx;
+	text-align: center;
+	line-height: 70upx;
+	font-size: 28upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+}
+/* 样品列表 */
+.sampleGoodsBtnBack {
+	width: 100%;
+	height: 100%;
+	/* background: var(--color-blue); */
+	opacity: 0.2;
+}
+
+.text {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 26upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	/* color: var(--goodsList-color);	 */
+}
+.sample_img{
+	width: 80upx;
+	height: 80upx;
+	margin: 200upx 335upx 20upx 335upx;
+	/* background: var(--goodsList-nogoods); */
+	background-size: 100% 100%;
+}

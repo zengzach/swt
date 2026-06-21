@@ -1,0 +1,22 @@
+.on {
+	/* background-color: var(--goodsList-aa) !important; */
+	/* color: var(--personal-color) !important; */
+	border-radius: 27upx;
+	border: 1upx solid #E8E8E8;
+}
+
+.invoice_msg_btn {
+	width: 690upx;
+	height: 70upx;
+	/* background: var(--cart-btn) */
+	border-radius: 35upx;
+	font-size: 28upx;
+	font-family: PingFang SC;
+	font-weight: bold;
+	color: #FFFFFF;
+	line-height: 70upx;
+	text-align: center;
+	margin: 90upx auto 77upx;
+	position: relative;
+	bottom: 77upx;
+}

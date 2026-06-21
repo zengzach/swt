@@ -1,0 +1,61 @@
+{
+  "envId": "cloud1-d1gdmvmst507ae4d9",
+  "region": "ap-shanghai",
+  "functionRoot": "./cloudfunctions",
+  "functions": [
+    {
+      "name": "getChatThread",
+      "timeout": 10,
+      "envVariables": {},
+      "runtime": "Nodejs18.15.0",
+      "memorySize": 256,
+      "installDependency": true,
+      "handler": "index.main"
+    },
+    {
+      "name": "closeChatThread",
+      "timeout": 10,
+      "envVariables": {},
+      "runtime": "Nodejs18.15.0",
+      "memorySize": 256,
+      "installDependency": true,
+      "handler": "index.main"
+    },
+    {
+      "name": "saveChatMessage",
+      "timeout": 10,
+      "envVariables": {},
+      "runtime": "Nodejs18.15.0",
+      "memorySize": 256,
+      "installDependency": true,
+      "handler": "index.main"
+    },
+    {
+      "name": "updateMsgCount",
+      "timeout": 10,
+      "envVariables": {},
+      "runtime": "Nodejs18.15.0",
+      "memorySize": 256,
+      "installDependency": true,
+      "handler": "index.main"
+    },
+    {
+      "name": "aiChat",
+      "timeout": 60,
+      "envVariables": {},
+      "runtime": "Nodejs18.15.0",
+      "memorySize": 512,
+      "installDependency": true,
+      "handler": "index.main"
+    },
+    {
+      "name": "getQuickQuestions",
+      "timeout": 10,
+      "envVariables": {},
+      "runtime": "Nodejs18.15.0",
+      "memorySize": 256,
+      "installDependency": true,
+      "handler": "index.main"
+    }
+  ]
+}

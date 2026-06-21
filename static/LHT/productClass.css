@@ -1,0 +1,14 @@
+.classifyContentTitle {
+	width: 100%;
+	height: 90upx;
+	background: #FFFFFF;
+	border-radius: 20upx 20upx 20upx 20upx;
+	font-size: 30upx;
+	font-family: PingFang SC;
+	font-weight: Bold;
+	/* color: var(--prodcut-text); */
+	margin-bottom: 14upx;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

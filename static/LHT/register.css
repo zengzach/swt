@@ -1,0 +1,37 @@
+
+button {
+	/* color: var(--login-btn); */
+}
+
+.register_welcome {
+	font-size: 46upx;
+	font-family: PingFang SC;
+	font-weight: 800;
+	/* color:var(--login-btn); */
+	line-height: 21upx;
+}
+.register_btn {
+	width: 600upx;
+	height: 80upx;
+	/* background: var(--register-back); */
+	border-radius: 35upx;
+	text-align: center;
+	line-height: 70upx;
+	font-size: 28upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+	margin-top: 70upx;
+	margin-left: 45upx;
+}
+
+/* .LoginBtn {
+	color: var(--login-btn);
+}
+
+.agreement {
+	color: var(--login-text);
+} */
+/* checkbox .wx-checkbox-input.wx-checkbox-input-checked::before {
+        color: var(--login-btn);
+} */

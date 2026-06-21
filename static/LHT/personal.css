@@ -1,0 +1,109 @@
+.personal_background {
+	width: 749.9upx;
+	height: 713upx;
+	margin-left: -35upx;
+	margin-top: 0upx;
+	/* background: var(--personal-background); */
+	background-size: 100% 100%;
+}
+
+.personal_one_right {
+	display: flex;
+	align-items: center;
+	margin-top: -13upx;
+	margin-right: -40upx;
+	width: 124upx;
+	height: 46upx;
+	/* background: var(--cart-btn);; */
+	border-radius: 22upx 0upx 0upx 22upx;
+}
+.image0 {
+	margin-left: 20upx;
+	margin-bottom: -13upx;
+	width: 46upx;
+	height: 46upx;
+	background: url(https://oss-sp-data.oss-cn-hangzhou.aliyuncs.com/img/wx/publicIcon/myRepairs.png);
+	background-size: 100% 100%;
+}
+.image {
+	margin-left: 20upx;
+	margin-bottom: -13upx;
+	width: 46upx;
+	height: 46upx;
+	background: url(https://oss-sp-data.oss-cn-hangzhou.aliyuncs.com/img/wx/publicIcon/account.png);
+	background-size: 100% 100%;
+}
+
+.image2 {
+	margin-left: 20upx;
+	margin-bottom: -13upx;
+	width: 46upx;
+	height: 46upx;
+	background: url(https://oss-sp-data.oss-cn-hangzhou.aliyuncs.com/img/wx/publicIcon/recevieAddress.png);
+	background-size: 100% 100%;
+}
+
+.image3 {
+	margin-left: 20upx;
+	margin-bottom: -13upx;
+	width: 46upx;
+	height: 46upx;
+	background: url(https://oss-sp-data.oss-cn-hangzhou.aliyuncs.com/img/wx/publicIcon/bill.png);
+	background-size: 100% 100%;
+}
+
+.image4 {
+	margin-left: 20upx;
+	margin-bottom: -13upx;
+	width: 46upx;
+	height: 46upx;
+	background: url(https://oss-sp-data.oss-cn-hangzhou.aliyuncs.com/img/wx/publicIcon/customerService.png);
+	background-size: 100% 100%;
+}
+
+.image5 {
+	margin-left: 20upx;
+	margin-bottom: -13upx;
+	width: 46upx;
+	height: 46upx;
+	background: url(https://oss-sp-data.oss-cn-hangzhou.aliyuncs.com/img/wx/publicIcon/helpCenter.png);
+	background-size: 100% 100%;
+}
+.image6 {
+	margin-left: 230upx;
+	margin-top: 12upx;
+	width: 100upx;
+	height: 100upx;
+	background: url(https://oss-sp-data.oss-cn-hangzhou.aliyuncs.com/img/wx/publicIcon/phoneCall.png);
+	background-size: 100% 100%;
+}
+.image7 {
+	margin-left: 20upx;
+	margin-bottom: -13upx;
+	width: 46upx;
+	height: 46upx;
+	background: url(https://oss-sp-data.oss-cn-hangzhou.aliyuncs.com/img/wx/publicIcon/inquiry.png);
+	background-size: 100% 100%;
+}
+.tel_number {
+	font-size: 32upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	line-height: 34upx;
+	margin-top: 29upx;
+}
+
+.callNow {
+	width: 277upx;
+	height: 106upx;
+	text-align: center;
+	line-height: 106upx;
+	font-size: 28upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	/* color: var(--login-checkbox); */
+}
+
+
+
+	

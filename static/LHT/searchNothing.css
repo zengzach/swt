@@ -1,0 +1,6 @@
+	.image1{
+		width: 96upx;
+		height: 95upx;
+		/* background: var(--goodsList-nogoods); */
+		background-size: 100% 100%;
+	}

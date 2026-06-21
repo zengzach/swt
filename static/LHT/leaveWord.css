@@ -1,0 +1,33 @@
+.color {
+	/* color: var(--prodcut-text); */
+	/* border-bottom: var(--goodsList-border); */
+	padding-bottom: 10upx;
+}
+
+.lastBtn {
+	width: 690upx;
+	height: 70upx;
+	/* background: var(--cart-btn); */
+	border-radius: 35upx;
+	margin: 40upx auto 0;
+	text-align: center;
+	line-height: 70upx;
+	font-size: 28upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+
+}
+
+.leaveWordState {
+	width: 120upx;
+	height: 38upx;
+	/* background: var(--placeOrder-rgb); */
+	border-radius: 0upx 0upx 18upx 0upx;
+	font-size: 26upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	/* color: var(--prodcut-text); */
+	text-align: center;
+	margin-top: 20upx;
+}

@@ -1,0 +1,9 @@
+{
+  "name": "saveChatMessage",
+  "version": "1.0.0",
+  "description": "保存单条聊天消息到数据库",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

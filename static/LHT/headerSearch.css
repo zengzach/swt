@@ -1,0 +1,40 @@
+/* 修改 searchBtn 修改uni-input */
+.uni-column {
+	width: 710upx;
+	position: relative;
+	margin: 0 auto;
+}
+
+
+.searchIcon {
+	width: 36upx;
+	position: absolute;
+	height: 36upx;
+	top: 25upx;
+	left: 42upx;
+	transform: translate(-50%, -40%);
+	margin-left: 20upx;
+	/* background:var(--index-searchIcon) ; */
+	background-size: 100% 100%;
+}
+
+.searchBtn {
+	width: 120upx;
+	height: 52upx;
+	position: absolute;
+	right: 25upx;
+	/* line-height: 52upx; */
+	text-align: center;
+	top: 5upx;
+	/* background: var(--color-blue); */
+	border-radius: 26upx;
+}
+.searchBtn text{
+	width: 120ypx;
+	height: 52upx;
+	line-height: 52upx;
+	font-size: 26upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+}

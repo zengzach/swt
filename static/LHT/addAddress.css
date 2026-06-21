@@ -1,0 +1,13 @@
+.add_address_submit {
+			width: 702upx;
+			height: 70upx;
+			/* background: var(--address-add); */
+			border-radius: 30upx;
+			font-size: 30upx;
+			font-family: PingFang SC;
+			font-weight: 500;
+			color: #FFFFFF;
+			line-height: 60upx;
+			text-align: center;
+			margin: 99upx auto;
+		}

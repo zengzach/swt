@@ -1,0 +1,9 @@
+{
+  "name": "getQuickQuestions",
+  "version": "1.0.0",
+  "description": "按 botId 获取智能问答快捷问题",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

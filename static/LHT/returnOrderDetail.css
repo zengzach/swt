@@ -1,0 +1,128 @@
+.returnOrderCotentText {
+	font-size: 32upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	/* color: var(--return-text); */
+}
+.returnOrderImgText {
+	/* // height: 27upx; */
+	font-size: 28upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	/* color: var(--return-text); */
+	line-height: 34upx;
+	margin-left: 24upx;
+	margin-top: 0upx;
+}
+
+.returnOrderImgTime {
+	font-size: 24upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	/* color: var(--return-text); */
+}
+
+.returnOrderImgRe {
+	width: 26upx;
+	height: 26upx;
+	/* background: var(--return-text); */
+	opacity: 0.12;
+	border-radius: 50%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.returnOrderImgAb {
+	position: absolute;
+	width: 14upx;
+	height: 14upx;
+	/* background: var(--return-text); */
+	border-radius: 50%;
+	opacity: 1 !important;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.returnGoodDtoBottomClick {
+	width: 220upx;
+	height: 70upx;
+	/* background: var(--cart-btn); */
+	border: 1upx solid #F3F5FB;
+	border-radius: 35upx;
+	text-align: center;
+	line-height: 70upx;
+	font-size: 30upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+	margin-top: 14upx;
+}
+
+.logisticsBtn {
+	width: calc(100% - 60upx);
+	height: 70upx;
+	/* background: var(--cart-btn); */
+	border-radius: 35upx;
+	margin: 120upx auto 0;
+	text-align: center;
+	line-height: 70upx;
+	font-size: 28upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+}
+
+.returnBtnOrder {
+	width: 220upx;
+	height: 70upx;
+	/* background: var(--cart-btn); */
+	border-radius: 35upx;
+	text-align: center;
+	line-height: 70upx;
+	font-size: 30upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+	margin-left: 23upx;
+	margin-top: 17upx;
+}
+
+/* 售后详情状态图片 */
+.image_one {
+	width: 56upx;
+	height: 56upx;
+	/* background: var(--returnOrder-one); */
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+}
+.image_two {
+	width: 56upx;
+	height: 56upx;
+	/* background: var(--returnOrder-two); */
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+}
+.image_three {
+	width: 56upx;
+	height: 56upx;
+	/* background: var(--returnOrder-three); */
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+}
+.image_four {
+	width: 56upx;
+	height: 56upx;
+	/* background: var(--returnOrder-four); */
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+}
+.image_six {
+	width: 56upx;
+	height: 56upx;
+	/* background: var(--returnOrder-six); */
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+}

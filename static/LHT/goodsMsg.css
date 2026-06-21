@@ -1,0 +1,90 @@
+.nogoShopping {
+	width: 128upx;
+	margin-top: 20upx;
+	height: 50upx;
+	background: #CFD0D2;
+	border-radius: 25upx;
+	font-size: 24upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+	line-height: 50upx;
+	margin-left: 165upx;
+	text-align: center;
+}
+
+.goShopping {
+	width: 128upx;
+	margin-top: 20upx;
+	height: 50upx;
+	/* background: var(--cart-btn); */
+	border-radius: 25upx;
+	font-size: 24upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+	line-height: 50upx;
+	margin-left: 165upx;
+	text-align: center;
+}
+
+.addCartBtn {
+	width: calc(100% - 48upx);
+	height: 70upx;
+	border: 1upx solid #E8E8E8;
+	border-radius: 35upx;
+	/* background: var(--cart-btn); */
+	margin: 55upx 24upx 0;
+	display: flex;
+	overflow: hidden;
+	font-size: 28upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	line-height: 70upx;
+}
+
+.noAddCart {
+	width: calc(100% - 48upx);
+	height: 70upx;
+	/* border: var(--coartNo-border); */
+	border:1upx solid #E8E8E8;
+	border-radius: 35upx;
+	/* background: var(--cartNo-color); */
+	margin: 55upx 24upx 0;
+	display: flex;
+	overflow: hidden;
+	font-size: 28upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	line-height: 70upx;
+}
+
+.cancel {
+	width: 50%;
+	background-color: #FFFFFF;
+	/* color: var(--personal-color); */
+	text-align: center;
+	border-radius: 35upx 0upx 35upx 35upx;
+}
+
+.cancel1 {
+	width: 50%;
+	background-color: #FFFFFF;
+	/* color: var(--cartNo-color); */
+	text-align: center;
+	border-radius: 35upx 0upx 35upx 35upx;
+}
+
+.on {
+	width: 50%;
+	/* background-color: var(--personal-color); */
+	color: #FFFFFF;
+	text-align: center;
+}
+
+.on1 {
+	width: 50%;
+	/* background-color: var(--cartNo-color); */
+	color: #FFFFFF;
+	text-align: center;
+}

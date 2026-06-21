@@ -1,0 +1,25 @@
+.addCartBtn {
+	/* width: 256upx; */
+	/* height: 70upx; */
+	/* background: var(--cart-btn); */
+	/* border-radius: 35upx; */
+	/* margin-right: 30upx;
+	font-size: 28upx;
+	color: #fff;
+	font-family: PingFang SC;
+	font-weight: 500;
+	line-height: 70upx;
+	text-align: center; */
+}
+
+.addCartBtnover {
+	width: 690upx;
+	height: 70upx;
+	background: var(--cart-btn);
+	border-radius: 35upx;
+	margin: 60upx 24upx 0;
+	text-align: center;
+	line-height: 70upx;
+	color: #FFFFFF;
+	font-size: 28upx;
+}

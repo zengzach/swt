@@ -1,0 +1,61 @@
+page {
+	/* background-image: var(--login-back); */
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+}
+.welcome{
+	font-size: 46upx;
+	font-family: PingFang SC;
+	font-weight: 800;
+	/* color: #202021; */
+	line-height: 44upx;
+	margin-top: 283upx;
+	margin-left: 81upx;
+	/* background: var(--register-back); */
+	-webkit-background-clip: text;
+	/* -webkit-text-fill-color: transparent; */
+}
+.bankLoginBgc{
+	width: 600upx;
+	height: 80upx;
+	margin: 176upx 75upx 0 75upx;
+	/* background: var(--register-back); */
+	border-radius: 40upx;
+	font-size: 30upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+	line-height: 80upx;
+	text-align:center;
+	
+}
+.phoneLoginBgc{
+	width: 600upx;
+	height: 80upx;
+	background: var(--register-back);
+	border-radius: 40upx;
+	margin-top: 60upx;
+	margin-left: 75upx;
+	font-size: 30upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+	line-height: 80upx;
+	text-align:center;
+	
+}
+.loginBtn {
+	width: 600upx;
+	height: 80upx;
+	/* background: var(--register-back); */
+	border-radius: 40upx;
+	font-size: 30upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+	line-height: 80upx;
+
+}
+checkbox .wx-checkbox-input.wx-checkbox-input-checked::before {
+        color:#333333
+}

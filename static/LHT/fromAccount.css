@@ -1,0 +1,53 @@
+/*  修改 fromAccountContent 和  fromAccountCompany*/
+
+.fromAccountContent {
+	width: calc(100% - 48upx);
+	height: 318upx;
+	margin: 24upx auto;
+	border-radius: 16upx;
+	/* background-image: var(--bank-bg) ; */
+	background-size: 100% 100%;
+}
+
+.fromAccountBank {
+	height: 25upx;
+	font-size: 26upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+	padding-top: 34upx;
+	margin-left: 50upx;
+}
+
+.fromAccountNumber {
+	width: 587upx;
+	height: 32upx;
+	font-size: 42upx;
+	font-family: PingFang SC;
+	font-weight: 800;
+	color: #FFFFFF;
+	margin-top: 46upx;
+	margin-left: 48upx;
+}
+
+.fromAccountBranch {
+	width: 257upx;
+	height: 25upx;
+	font-size: 26upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #FFFFFF;
+	margin-left: 48upx;
+	margin-top: 18upx;
+}
+
+.fromAccountCompany {
+	width: 332upx;
+	height: 23upx;
+	font-size: 24upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	/* color: var(--prodcut-text); */
+	margin-left: 321upx;
+	margin-top: 80upx;
+}

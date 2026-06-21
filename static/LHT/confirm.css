@@ -1,0 +1,22 @@
+.confirm_btn {
+	width: 179upx;
+	height: 70upx;
+	/* background: var(--cart-btn); */
+	border-radius: 35upx;
+	font-size: 28upx;
+	font-family: PingFang SC;
+	font-weight: 400;
+	color: #FFFFFF;
+	line-height: 70upx;
+	text-align: center;
+}
+
+.address_icon {
+	width: 67upx;
+	height: 66upx;
+	position: absolute;
+	top: 0;
+	left: 0;
+	/* background: var( --confirm-default); */
+	background-size: 100% 100%;
+}

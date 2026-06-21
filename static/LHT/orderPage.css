@@ -1,0 +1,65 @@
+.orderBtn {
+	/* color: var(--login-checkbox); */
+	font-weight: 600;
+}
+
+.orderNextBtn {
+	/* width: 150upx; */
+	height: 50upx;
+	/* background:var(--order-rgb) !important; */
+	border-radius: 25upx;
+	line-height: 50upx;
+	text-align: center;
+	font-size: 26upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	/* color: var(--login-checkbox) !important; */
+}
+
+.afterSentOut {
+	height: 50upx;
+	font-size: 28upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	/* color: var(--login-checkbox); */
+}
+
+/* 无订单 */
+.noList {
+	width: 100%;
+	background-color: #f6f6f6;
+	margin-top: 50upx;
+	height: 940upx;
+
+}
+
+.noImage {
+	width: 80upx;
+	height: 80upx;
+	margin: 200upx 335upx 20upx 335upx;
+	/* background: var(--orderlist-nolist); */
+	background-size: 100% 100%;
+}
+
+.noText {
+	width: 300upx;
+	font-size: 30upx;
+	font-family: PingFang SC;
+	font-weight: 500;
+	color: #202021;
+	margin: 0 auto;
+	text-align: center;
+}
+.pay{
+	width: 164upx;
+	height: 64upx;
+	border-radius: 30upx;
+	text-align: center;
+	line-height: 64upx;
+	margin-top: 19upx;
+	margin-left: 510upx;
+	font-size: 26upx;
+	/* background: var(--cart-btn); */
+	color: #FFFFFF;
+	border: none;
+}

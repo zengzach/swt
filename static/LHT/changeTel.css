@@ -1,0 +1,53 @@
+	.submit_btn{
+		width: calc(100% - 60upx);
+		height: 70upx;
+		margin: 0 24upx;
+		/* background: var(--cart-btn); */
+		border-radius: 30upx;
+		margin: 90upx auto 0;
+		font-size: 28upx;
+		font-family: PingFang SC;
+		font-weight: 500;
+		color: #FFFFFF;
+		line-height: 70upx;
+		text-align: center;
+	}
+	.verification_input_code{
+		width: 180upx;
+		height: 56upx;
+		background: #FFFFFF;
+		border:1upx solid #EAEAEA;
+		border-radius: 28upx;
+		font-size: 26upx;
+		font-family: PingFang SC;
+		font-weight: 500;
+		/* color: var(--prodcut-text); */
+		line-height: 56upx;
+		text-align: center;
+		margin-left:60upx;
+	}
+	/* 身份验证页面样式 */
+	.next_step{
+		width: calc(100% - 48upx);
+		height: 70upx;
+		margin: 0 24upx;
+		/* background: var(--cart-btn); */
+		border-radius: 30upx;
+		margin: 106upx auto 0;
+		font-size: 28upx;
+		font-family: PingFang SC;
+		font-weight: 500;
+		color: #FFFFFF;
+		line-height: 70upx;
+		text-align: center;
+	}
+	.get_code{
+		width: 200upx;
+		height: 44upx;
+		text-align: center;
+		font-size: 30upx;
+		font-family: PingFang SC;
+		font-weight: 500;
+		/* color: var(--prodcut-text); */
+		line-height: 44upx;
+	}
