@@ -2,7 +2,6 @@ const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const db = cloud.database()
-const _ = db.command
 
 // 保存一轮完整对话（用户消息 + AI消息 + 线程更新 + 消息计数），减少数据库操作
 exports.main = async (event, context) => {
@@ -48,35 +47,6 @@ exports.main = async (event, context) => {
       updateData.title = userContent.substring(0, 20)
     }
     await db.collection('chat_threads').doc(threadId).update({ data: updateData })
-
-    // 合并 updateMsgCount 逻辑：更新当前用户的问答次数
-    if (openid) {
-      try {
-        const countRes = await db.collection('msg_count')
-          .where({ _openid: openid })
-          .limit(1)
-          .get()
-        if (countRes.data && countRes.data.length > 0) {
-          await db.collection('msg_count').doc(countRes.data[0]._id).update({
-            data: {
-              count: _.inc(1),
-              updateTime: db.serverDate()
-            }
-          })
-        } else {
-          await db.collection('msg_count').add({
-            data: {
-              _openid: openid,
-              count: 1,
-              createTime: db.serverDate(),
-              updateTime: db.serverDate()
-            }
-          })
-        }
-      } catch (countErr) {
-        console.error('[saveChatRound] 更新消息计数失败:', countErr)
-      }
-    }
 
     return {
       success: true,

@@ -46,6 +46,7 @@
   "libVersion": "2.25.2",
   "appid": "wxf52f8a28b5960d43",
   "projectname": "miniprogram-1",
+  "cloudfunctionRoot": "cloudfunctions/",
   "condition": {},
   "editorSetting": {
     "tabIndent": "insertSpaces",

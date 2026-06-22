@@ -33,3 +33,10 @@ uni-app 编译微信小程序时，模板中**直接给事件传字符串参数*
 - **已有函数更新代码**：用 `tcb fn code update <name> --env-id <envId> --dir ./cloudfunctions/<name>` 即可。
 - **新建函数**：用 CloudBase MCP 工具 `manageFunctions`（action=createFunction, functionRootPath 指向 cloudfunctions 目录），支持 `Nodejs18.15` 等 runtime。
 - 云开发环境：`cloud1-d1gdmvmst507ae4d9`（ap-shanghai）。
+
+## 智能问答 Markdown 渲染（2026-06-22）
+- **自写转换器** `utils/markdown.js`：不依赖第三方库，支持标题/粗体/斜体/代码块/列表/引用/链接/表格/删除线/水平线，带模块级缓存。
+- **流式渲染策略**：AI 消息 `isStreaming=true` 时用 `<text>` 纯文本（避免每 token 解析 markdown 卡顿），流式完成后 `isStreaming=false` 切换为 `<mp-html>` 渲染。
+- **mp-html** 已有（v2.4.2，easycom 自动引入，无需 import），通过 `tag-style` prop 控制标签样式。
+- **回到最新按钮**：scroll-view `@scroll` 事件 + 懒加载视口高度计算距底距离，用户上滑时跳过流式自动滚动。
+- 模板中 "111" 测试按钮用户要求保留。

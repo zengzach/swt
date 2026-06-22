@@ -8,6 +8,7 @@ const _ = db.command
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const openid = wxContext.OPENID || ''
+  const botId = event.botId || ''
 
   if (!openid) {
     return { success: false, message: '未获取到 openid' }
@@ -27,6 +28,7 @@ exports.main = async (event, context) => {
       await db.collection('msg_count').doc(docId).update({
         data: {
           count: _.inc(1),
+          botId: botId,
           updateTime: db.serverDate()
         }
       })
@@ -36,6 +38,7 @@ exports.main = async (event, context) => {
       const addRes = await db.collection('msg_count').add({
         data: {
           _openid: openid,
+          botId: botId,
           count: 1,
           createTime: db.serverDate(),
           updateTime: db.serverDate()

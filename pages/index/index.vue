@@ -527,20 +527,20 @@
 	<view class="chat-overlay" v-if="chatOpen" @tap.stop>
 		<view class="chat-dialog" @tap.stop>
 			<!-- 对话框头部 -->
-			<view class="chat-header">
+			<view class="chat-header" :style="{paddingTop: statusBarHeight + 'px'}">
 				<view class="chat-header-left">
 					<text class="chat-header-title">智能问答</text>
-				</view>
-				<view class="chat-header-right">
 					<view class="chat-new-btn" @tap="startNewChat" v-if="showNewChatBtn">
 						<text>+ 新对话</text>
 					</view>
-					<view class="chat-close" @tap="closeChat">✕</view>
+				</view>
+				<view class="chat-header-right">
+					<view class="chat-close" @tap="closeChat">✕ 关闭</view>
 				</view>
 			</view>
 
 			<!-- 消息列表 -->
-			<scroll-view class="chat-messages" scroll-y :scroll-into-view="scrollToMsg" :scroll-with-animation="false">
+			<scroll-view class="chat-messages" scroll-y :scroll-into-view="scrollToMsg" :scroll-with-animation="false" @scroll="onChatScroll">
 				<!-- 欢迎消息 -->
 				<view class="chat-msg chat-msg-ai" v-if="chatMessages.length === 0">
 					<view class="chat-avatar ai-avatar">🤖</view>
@@ -549,13 +549,15 @@
 					</view>
 				</view>
 
-				<block v-for="(item, index) in chatMessages" :key="item.id">
-					<!-- AI消息 -->
+			<block v-for="(item, index) in chatMessages" :key="item.id">
+				<!-- AI消息 -->
 					<view class="chat-msg chat-msg-ai" v-if="item.role === 'ai'" :id="'msg-' + index">
 						<view class="chat-avatar ai-avatar">🤖</view>
 						<view class="chat-bubble-wrap ai-bubble-wrap">
-							<view class="chat-bubble ai-bubble" @tap="copyMessage(index)">
-								<text :selectable="true">{{item.content}}</text>
+						<view class="chat-bubble ai-bubble" @tap="copyMessage(index)">
+							<!-- 流式中用纯文本保证性能，完成后用 mp-html 渲染 Markdown -->
+							<text v-if="item.isStreaming" :selectable="true">{{item.content}}</text>
+							<mp-html v-else class="md-content" :content="renderMarkdown(item.content)" :selectable="true" :tag-style="mdTagStyle" />
 							<text v-if="item.link" class="chat-link" :data-idx="index" @tap.stop="onChatLinkTap">{{item.link.text}}</text>
 							<!-- 小程序分享卡片 -->
 							<view v-if="item.card" class="chat-card" :data-idx="index" @tap.stop="onChatLinkTap">
@@ -596,20 +598,22 @@
 					</view>
 				</block>
 
-				<!-- 加载中 -->
-				<view class="chat-msg chat-msg-ai" v-if="chatLoading" id="msg-loading">
-					<view class="chat-avatar ai-avatar">🤖</view>
-					<view class="chat-bubble ai-bubble chat-typing">
-						<view class="typing-dots">
-							<view class="dot"></view>
-							<view class="dot"></view>
-							<view class="dot"></view>
-						</view>
-					</view>
+			<!-- 加载中 -->
+			<view class="chat-msg chat-msg-ai" v-if="chatLoading" id="msg-loading">
+				<view class="chat-avatar ai-avatar">🤖</view>
+				<view class="chat-bubble ai-bubble chat-typing">
+					<!-- 等待计时（让用户感知等待进度） -->
+					<text class="wait-text">正在思考... {{chatWaitSeconds}}s</text>
 				</view>
-			</scroll-view>
+			</view>
+		</scroll-view>
 
-		<!-- 快捷问题（按 botId 从数据库动态加载） -->
+		<!-- 回到最新消息按钮 -->
+		<view class="scroll-bottom-btn" v-if="showScrollBottom" @tap="scrollToLatest">
+			<text class="scroll-bottom-icon">↓</text>
+		</view>
+
+	<!-- 快捷问题（按 botId 从数据库动态加载） -->
 		<view class="chat-quick-questions" v-if="chatMessages.length === 0 && quickQuestions.length > 0">
 			<view
 				v-for="(q, qi) in quickQuestions"
@@ -690,6 +694,7 @@
 		getArticleList
 	} from '@/api/articleApi.js'
 	import moment from 'moment';
+	import { markdownToHtml } from '@/utils/markdown.js'
 	export default {
 		components: {
 			headerSearch,
@@ -779,10 +784,34 @@
 				chatThreadId: '',         // 对话线程 ID
 				showNewChatBtn: false,    // 是否显示"新对话"按钮
 				chatInput: '',            // 输入框文本（注意：原代码用的是 chatInput，不是 chatInputText）
-				chatLoading: false,       // 是否正在加载 AI 回复
-				canSend: false,           // 是否可以发送消息
-				scrollToMsg: '',          // 滚动到指定消息
-				userAvatar: '',           // 用户头像（可选）
+			chatLoading: false,       // 是否正在加载 AI 回复
+			hasFirstToken: false,     // 是否已收到首个 token（区分"等待思考"与"正在输出"）
+			chatWaitSeconds: 0,       // 首字等待秒数（用于进度反馈）
+			canSend: false,           // 是否可以发送消息
+			scrollToMsg: '',          // 滚动到指定消息
+			showScrollBottom: false,  // 是否显示"回到最新"按钮
+			// Markdown 渲染标签样式（供 mp-html 使用）
+			mdTagStyle: {
+				h1: 'font-size: 36rpx; font-weight: bold; margin: 16rpx 0 8rpx;',
+				h2: 'font-size: 32rpx; font-weight: bold; margin: 16rpx 0 8rpx;',
+				h3: 'font-size: 30rpx; font-weight: bold; margin: 12rpx 0 6rpx;',
+				h4: 'font-size: 28rpx; font-weight: bold; margin: 12rpx 0 6rpx;',
+				p: 'margin: 8rpx 0; line-height: 1.7;',
+				ul: 'padding-left: 32rpx; margin: 8rpx 0;',
+				ol: 'padding-left: 32rpx; margin: 8rpx 0;',
+				li: 'margin: 4rpx 0; line-height: 1.7;',
+				code: 'background: #f5f5f5; padding: 2rpx 8rpx; border-radius: 4rpx; font-size: 26rpx; color: #c7254e;',
+				pre: 'background: #f5f5f5; padding: 16rpx; border-radius: 8rpx; margin: 12rpx 0; overflow-x: auto;',
+				blockquote: 'border-left: 6rpx solid #4CAF50; padding-left: 16rpx; margin: 12rpx 0; color: #666;',
+				strong: 'font-weight: bold;',
+				em: 'font-style: italic;',
+				a: 'color: #1E88E5; text-decoration: underline;',
+				table: 'border-collapse: collapse; margin: 12rpx 0; width: 100%;',
+				th: 'border: 1rpx solid #ddd; padding: 8rpx; background: #f5f5f5; font-weight: bold;',
+				td: 'border: 1rpx solid #ddd; padding: 8rpx;',
+				hr: 'border: none; border-top: 1rpx solid #e0e0e0; margin: 12rpx 0;'
+			},
+			userAvatar: '',           // 用户头像（可选）
 			aiAvatar: 'https://oss-sp-data.oss-cn-hangzhou.aliyuncs.com/img/ai-avatar.png', // AI 头像
 			chatBotId: 'agent-tengxunyunz-2eiueb23fdc573', // 当前智能问答 Agent ID
 			quickQuestions: [],          // 动态快捷问题（从数据库按 botId 加载）
@@ -1459,8 +1488,11 @@
 			console.log(`=====111111111111111222222222222===`)
 			this.chatOpen = true
 
-			// 如果已有消息，说明是重复打开，不再加载
-			if (this.chatMessages.length > 0) return
+			// 如果已有消息，说明是重复打开，不再加载，仅定位到用户最后一个问题
+			if (this.chatMessages.length > 0) {
+				this._scrollToLastUserQuestion()
+				return
+			}
 
 			// 新对话：按 botId 加载快捷问题（异步不阻塞）
 			this._loadQuickQuestions(this.chatBotId)
@@ -1478,21 +1510,12 @@
 				this.chatMessages = messages.map((m, i) => ({
 					id: 'msg-load-' + i,
 					role: m.role === 'assistant' ? 'ai' : m.role,
-					content: m.content
+					content: m.content,
+					isStreaming: false
 				}))
 				this.showNewChatBtn = true
 				// 滚动到最后一条用户消息
-				let lastUserIdx = -1
-				for (let i = this.chatMessages.length - 1; i >= 0; i--) {
-					if (this.chatMessages[i].role === 'user') {
-						lastUserIdx = i
-						break
-					}
-				}
-				if (lastUserIdx >= 0) {
-					this.scrollToMsg = ''
-					this.$nextTick(() => { this.scrollToMsg = 'msg-' + lastUserIdx })
-				}
+				this._scrollToLastUserQuestion()
 			} else {
 					this.chatThreadId = threadId || ''
 				}
@@ -1501,6 +1524,34 @@
 				// 失败不影响使用，从头开始
 			}
 		},
+		// 定位到用户最后一个问题（打开对话框 / 加载历史后调用）
+		_scrollToLastUserQuestion() {
+			let lastUserIdx = -1
+			for (let i = this.chatMessages.length - 1; i >= 0; i--) {
+				if (this.chatMessages[i].role === 'user') {
+					lastUserIdx = i
+					break
+				}
+			}
+		if (lastUserIdx < 0) return
+		const target = 'msg-' + lastUserIdx
+		// 清除上一次未执行的定时器，避免重复打开时错乱
+		if (this._scrollTimer) {
+			clearTimeout(this._scrollTimer)
+			this._scrollTimer = null
+		}
+		// 先重置为空，确保 scroll-into-view 检测到值变化
+		this.scrollToMsg = ''
+		// scroll-view 创建 + mp-html 异步解析都需要时间：
+		// 单靠 nextTick 时上方 AI 气泡（mp-html）尚未撑开，目标元素位置错误导致定位失效。
+		// 故 nextTick（普通节点渲染）后再延时 500ms（等 mp-html 撑开）才设目标。
+		this.$nextTick(() => {
+			this._scrollTimer = setTimeout(() => {
+				this.scrollToMsg = target
+				this._scrollTimer = null
+			}, 500)
+		})
+	},
 		// 按 botId 从数据库加载快捷问题
 		async _loadQuickQuestions(botId) {
 			try {
@@ -1529,9 +1580,10 @@
 					console.error('[智能问答] 关闭旧线程失败', err)
 					})
 				}
-			this.chatMessages = []
-			this.chatThreadId = ''
-			this.showNewChatBtn = false
+		this.chatMessages = []
+		this.chatThreadId = ''
+		this.showNewChatBtn = false
+		this.showScrollBottom = false
 			// 新对话：重新加载快捷问题
 			this._loadQuickQuestions(this.chatBotId)
 		},
@@ -1562,21 +1614,23 @@
 				const messages = [...this.chatMessages, userMsg]
 				this.chatMessages = messages
 				this.chatInput = ''
-				this.chatLoading = true
-				this.canSend = false
-		this.scrollToMsg = ''
-		this.$nextTick(() => { this.scrollToMsg = 'msg-' + (messages.length - 1) })
+			this.chatLoading = true
+			this.canSend = false
+			// 将最后一条用户消息滚动到顶部
+			this._scrollToLastUserQuestion()
 				// 特殊关键词：输入"测试"返回跳转链接
 				if (userMsg.content === '测试') {
 					const aiMsg = {
 					id: 'msg-' + Date.now(),
 					role: 'ai',
-					content: '点击跳转到我的页面 👉 ',
-					link: { text: '跳转', url: '/pages/prodcutClass/prodcutClass'}
+				content: '点击跳转到我的页面 👉 ',
+				link: { text: '跳转', url: '/pages/prodcutClass/prodcutClass'},
+				isStreaming: false
 					}
 					const newMsgs = [...this.chatMessages, aiMsg]
 					this.chatMessages = newMsgs
 					this.chatLoading = false
+			if (this._waitTimer) { clearInterval(this._waitTimer); this._waitTimer = null }
 			this.scrollToMsg = ''
 		this.$nextTick(() => { this.scrollToMsg = 'msg-' + (newMsgs.length - 1) })
 			return
@@ -1588,11 +1642,13 @@
 				id: 'msg-' + Date.now(),
 				role: 'ai',
 				content: '为您生成小程序卡片，点击即可跳转：',
-				card: { title: '产品分类', desc: '点击进入产品分类页面', path: '/pages/prodcutClass/prodcutClass', image: 'cloud://cloud1-d1gdmvmst507ae4d9.636c-cloud1-d1gdmvmst507ae4d9-1305841482/991d679157999e8648d1a0eec87bda9a.png' }
+				card: { title: '产品分类', desc: '点击进入产品分类页面', path: '/pages/prodcutClass/prodcutClass', image: 'cloud://cloud1-d1gdmvmst507ae4d9.636c-cloud1-d1gdmvmst507ae4d9-1305841482/991d679157999e8648d1a0eec87bda9a.png' },
+				isStreaming: false
 				}
 					const newMsgs = [...this.chatMessages, aiMsg]
 					this.chatMessages = newMsgs
 					this.chatLoading = false
+			if (this._waitTimer) { clearInterval(this._waitTimer); this._waitTimer = null }
 			this.scrollToMsg = ''
 		this.$nextTick(() => { this.scrollToMsg = 'msg-' + (newMsgs.length - 1) })
 			return
@@ -1623,14 +1679,24 @@
 				const aiMsg = {
 					id: 'msg-' + Date.now(),
 					role: 'ai',
-					content: '正在查询，请等待...',
-					recommendQuestions: []
+				content: '正在查询，请等待...',
+				recommendQuestions: [],
+				isStreaming: true
 				}
 					const msgs = [...this.chatMessages, aiMsg]
 					this.chatMessages = msgs
 
-					const idx = this.chatMessages.length - 1
-					// 复用 threadId，首次对话则生成并保存
+				const idx = this.chatMessages.length - 1
+
+				// 启动等待计时器（首 token 到达前显示"正在思考... Ns"）
+				this.hasFirstToken = false
+				this.chatWaitSeconds = 0
+				if (this._waitTimer) { clearInterval(this._waitTimer); this._waitTimer = null }
+				this._waitTimer = setInterval(() => {
+					this.chatWaitSeconds++
+				}, 1000)
+
+				// 复用 threadId，首次对话则生成并保存
 					let threadId = this.chatThreadId
 					if (!threadId) {
 					threadId = 'thread_id_' + generateId()
@@ -1685,13 +1751,14 @@
 							}
 							
 							switch (data.type) {
-						case 'TEXT_MESSAGE_CONTENT':
-							aiText += data.delta
-							this.chatMessages[idx].content = aiText
-							this.chatLoading = false
-					this.scrollToMsg = ''
-					this.$nextTick(() => { this.scrollToMsg = 'msg-' + idx })
-							break
+					case 'TEXT_MESSAGE_CONTENT':
+						// 首 token 到达：标记已开始输出（计时器继续运行，直到 chatLoading=false）
+						if (!this.hasFirstToken) {
+							this.hasFirstToken = true
+						}
+						// 仅累积文本，不更新 UI；等流式结束后一次性渲染 Markdown
+						aiText += data.delta
+						break
 							case 'RUN_ERROR':
 								console.error('[智能问答] 流式响应错误:', data.message)
 								// 检测 503 类错误，触发重试
@@ -1702,9 +1769,11 @@
 								retryReason = 'RUN_ERROR: ' + errMsg.substring(0, 100)
 								} else {
 								// 非 503 的 RUN_ERROR，显示错误并结束
-								this.chatMessages[idx].content = `AI 服务出错：${errMsg || '未知错误'}`
-								this.chatLoading = false
-								aiSuccess = true // 标记结束，不再重试
+							this.chatMessages[idx].content = `AI 服务出错：${errMsg || '未知错误'}`
+							this.chatMessages[idx].isStreaming = false
+							this.chatLoading = false
+							if (this._waitTimer) { clearInterval(this._waitTimer); this._waitTimer = null }
+							aiSuccess = true // 标记结束，不再重试
 								}
 								break
 						case 'RUN_FINISHED':
@@ -1716,18 +1785,24 @@
 							try {
 								await wx.cloud.callFunction({
 								name: 'saveChatRound',
-								data: {
-									threadId: currentThreadId,
-									userContent: userMsg.content,
-									aiContent: aiText
-								}
-								})
-							} catch (err) {
-								console.error('[saveChatRound] 保存消息失败', err)
-								uni.showToast({ title: '消息保存失败，请检查网络', icon: 'none' })
+							data: {
+								threadId: currentThreadId,
+								userContent: userMsg.content,
+								aiContent: aiText
 							}
+								})
+						} catch (err) {
+							console.error('[saveChatRound] 保存消息失败', err)
+							uni.showToast({ title: '消息保存失败，请检查网络', icon: 'none' })
+						}
 
-							// 审计日志（非关键，异步不阻塞主流程）
+						// 更新消息计数（非关键，异步不阻塞主流程）
+						wx.cloud.callFunction({
+							name: 'updateMsgCount',
+							data: { botId: this.chatBotId }
+						}).catch(err => console.error('[updateMsgCount] 更新计数失败', err))
+
+						// 审计日志（非关键，异步不阻塞主流程）
 							wx.cloud.callFunction({
 								name: 'saveChatLog',
 								data: { question: userMsg.content, answer: aiText }
@@ -1738,7 +1813,24 @@
 						// 获取追问建议（非关键，异步不阻塞主流程）
 						this._fetchRecommendQuestions(idx, userMsg.content, aiText, historyMessages)
 						}
-						aiSuccess = true // 成功完成
+						// 一次性设置完整内容并切换为 mp-html 渲染
+						this.chatMessages[idx].content = aiText
+						this.chatMessages[idx].isStreaming = false
+						this.chatLoading = false
+						if (this._waitTimer) { clearInterval(this._waitTimer); this._waitTimer = null }
+						if (!this.showScrollBottom) {
+							// mp-html 异步解析需要时间，直接 nextTick 时气泡尚未撑开，定位失效
+							// 先重置 → nextTick → 延时 500ms（等 mp-html 撑开）→ 设目标
+							if (this._scrollTimer) { clearTimeout(this._scrollTimer); this._scrollTimer = null }
+							this.scrollToMsg = ''
+							this.$nextTick(() => {
+								this._scrollTimer = setTimeout(() => {
+									this.scrollToMsg = 'msg-' + idx
+									this._scrollTimer = null
+								}, 500)
+							})
+						}
+					aiSuccess = true // 成功完成
 							break
 							}
 
@@ -1770,10 +1862,20 @@
 						const waitTime = Math.pow(2, retryCount) * 2000
 						console.log(`[智能问答] 检测到 503 错误(${retryReason})，第 ${retryCount} 次重试，等待 ${waitTime}ms...`)
 
-						this.chatMessages[idx].content = `小助手正在为你努力查询中，需要一点等待时间......`
-						//[`chatMessages[${idx}].content`]: `AI 服务启动中，请稍候...（第 ${retryCount} 次重试，约 ${waitTime / 1000} 秒后重试）`
+					this.chatMessages[idx].content = `小助手正在为你努力查询中，需要一点等待时间......`
+					//[`chatMessages[${idx}].content`]: `AI 服务启动中，请稍候...（第 ${retryCount} 次重试，约 ${waitTime / 1000} 秒后重试）`
 
-						await new Promise(resolve => setTimeout(resolve, waitTime))
+					// 重试：重置首 token 标记，并在等待结束后重启计时器
+					this.hasFirstToken = false
+					this.chatWaitSeconds = 0
+					if (this._waitTimer) { clearInterval(this._waitTimer); this._waitTimer = null }
+
+					await new Promise(resolve => setTimeout(resolve, waitTime))
+
+					// 等待结束，重新启动等待计时器
+					this._waitTimer = setInterval(() => {
+						this.chatWaitSeconds++
+					}, 1000)
 					} else if (needRetry) {
 						// 已达最大重试次数
 						console.error(`[智能问答] 已达最大重试次数(${maxRetries})，放弃重试`)
@@ -1781,23 +1883,28 @@
 					}
 					}
 
-					// 确保加载状态关闭
-					this.chatLoading = false
-					this.canSend = !!this.chatInput.trim()
+				// 确保加载状态关闭
+				this.chatLoading = false
+				if (this._waitTimer) { clearInterval(this._waitTimer); this._waitTimer = null }
+				this.hasFirstToken = false
+				this.canSend = !!this.chatInput.trim()
 
 				} catch (err) {
 					console.error('智能问答失败:', err)
 					const fallback = this._generateFallbackAnswer(userMsg.content)
 					const aiMsg = {
 					id: 'msg-' + Date.now(),
-					role: 'ai',
-					content: fallback
+				role: 'ai',
+				content: fallback,
+				isStreaming: false
 					}
 
-					const newMessages = [...this.chatMessages, aiMsg]
-					this.chatMessages = newMessages
-					this.chatLoading = false
-					this.canSend = !!this.chatInput.trim()
+				const newMessages = [...this.chatMessages, aiMsg]
+				this.chatMessages = newMessages
+				this.chatLoading = false
+				if (this._waitTimer) { clearInterval(this._waitTimer); this._waitTimer = null }
+				this.hasFirstToken = false
+				this.canSend = !!this.chatInput.trim()
 			this.scrollToMsg = ''
 		this.$nextTick(() => { this.scrollToMsg = 'msg-' + (newMessages.length - 1) })
 					// 保存降级回答
@@ -1816,15 +1923,17 @@
 			return
 		}
 
+		// 以后面@@之后的话为基准请推测用户接下来可能想继续提问的3个问题。只输出问题本身，每行一个，不要编号、不要引号、不要任何解释或前后缀@@
 		const botId = 'agent-tengxunyunz-2eiueb23fdc573'
 		try {
 			// 构造追问生成指令，附带完整对话上下文（历史 + AI 回复 + 生成指令）
 			const recommendPrompt = '基于以上对话内容，请推测用户接下来可能想继续提问的3个问题。只输出问题本身，每行一个，不要编号、不要引号、不要任何解释或前后缀。'
+			
 			const messages = [
-				...historyMessages,
-				{ id: String(Date.now()) + 'r', role: 'assistant', content: aiReply },
-				{ id: String(Date.now()) + 'u', role: 'user', content: recommendPrompt }
+				{ id: String(Date.now()) + 'u', role: 'user', content: recommendPrompt+aiReply }
 			]
+
+			//console.error('===============questions===messages=======', messages)
 
 			// 使用独立的 threadId，避免污染主对话历史
 			const recThread = 'recommend_' + Date.now()
@@ -1877,6 +1986,60 @@
 			console.error('[sendMessage 获取推荐问题] 失败', err)
 		}
 	},
+		// Markdown 转 HTML（带模块级缓存，相同内容不重复转换）
+		renderMarkdown(content) {
+			return markdownToHtml(content)
+		},
+		// 滚动事件：检测是否需要显示"回到最新"按钮
+		onChatScroll(e) {
+			const { scrollTop, scrollHeight } = e.detail
+			if (this._scrollViewHeight == null) {
+				// 首次滚动时懒加载 scroll-view 可视高度
+				uni.createSelectorQuery().in(this)
+					.select('.chat-messages')
+					.boundingClientRect()
+					.exec(res => {
+						if (res && res[0]) this._scrollViewHeight = res[0].height
+						this._checkScrollBottom(scrollTop, scrollHeight)
+					})
+			} else {
+				this._checkScrollBottom(scrollTop, scrollHeight)
+			}
+		},
+		// 判断距离底部是否超过阈值，决定按钮显隐
+		_checkScrollBottom(scrollTop, scrollHeight) {
+			const viewH = this._scrollViewHeight || 400
+			const distanceFromBottom = scrollHeight - scrollTop - viewH
+			this.showScrollBottom = distanceFromBottom > 120
+		},
+		// 点击"回到最新"按钮，滚动到最后一条消息
+		scrollToLatest() {
+			// 优先定位到最后一条用户消息（即最后一个问题），其次到最后一条消息
+			let targetIdx = -1
+			for (let i = this.chatMessages.length - 1; i >= 0; i--) {
+				if (this.chatMessages[i].role === 'user') {
+					targetIdx = i
+					break
+				}
+			}
+			if (targetIdx < 0 && this.chatMessages.length > 0) {
+				targetIdx = this.chatMessages.length - 1
+			}
+			this.scrollToMsg = ''
+			// mp-html 异步解析需要时间，延时 500ms 等气泡撑开后再定位
+			if (this._scrollTimer) { clearTimeout(this._scrollTimer); this._scrollTimer = null }
+			this.$nextTick(() => {
+				this._scrollTimer = setTimeout(() => {
+					if (targetIdx >= 0) {
+						this.scrollToMsg = 'msg-' + targetIdx
+					} else if (this.chatLoading) {
+						this.scrollToMsg = 'msg-loading'
+					}
+					this._scrollTimer = null
+				}, 500)
+			})
+			this.showScrollBottom = false
+		},
 		// 复制消息内容
 		copyMessage(index) {
 			const msg = this.chatMessages[index]
@@ -3409,25 +3572,22 @@
 
 
 	//聊天对话框
-	/* 对话框遮罩 */
+	/* 对话框遮罩（全屏） */
 	.chat-overlay {
 	position: fixed;
 	top: 0; left: 0; right: 0; bottom: 0;
-	background: rgba(0, 0, 0, 0.5);
+	background: #f5f5f5;
 	z-index: 200;
-	display: flex;
-	align-items: flex-end;
-	justify-content: center;
 	}
 
-	/* 对话框主体 */
+	/* 对话框主体（全屏） */
 	.chat-dialog {
 	width: 100%;
-	height: 80vh;
+	height: 100vh;
 	background: #f5f5f5;
-	border-radius: 32rpx 32rpx 0 0;
 	display: flex;
 	flex-direction: column;
+	position: relative;
 	}
 
 
@@ -3435,13 +3595,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 28rpx 30rpx;
+	padding: 28rpx 30rpx 20rpx;
 	background: #EE281E;
-	border-radius: 32rpx 32rpx 0 0;
 	flex-shrink: 0;
 	}
-	.chat-header-left  { display: flex; align-items: center; }
-	.chat-header-right { display: flex; align-items: center; gap: 16rpx; }
+	.chat-header-left  { display: flex; align-items: center; gap: 16rpx; }
+	.chat-header-right { display: flex; align-items: center; justify-content: center; flex: 1; padding-right: 150rpx; }
 	.chat-header-icon  { font-size: 36rpx; margin-right: 12rpx; }
 	.chat-header-title { font-size: 32rpx; color: #ffffff; font-weight: bold; }
 
@@ -3458,10 +3617,14 @@
 
 	/* 关闭按钮 */
 	.chat-close {
-	font-size: 32rpx;
-	color: rgba(255,255,255,0.8);
-	padding: 8rpx 16rpx;
+	font-size: 24rpx;
+	color: #fff;
+	background: rgba(255,255,255,0.25);
+	padding: 8rpx 40rpx;
+	border-radius: 24rpx;
+	border: 1rpx solid rgba(255,255,255,0.5);
 	}
+	.chat-close:active { background: rgba(255,255,255,0.4); }
 
 	.chat-messages {
 	flex: 1;
@@ -3509,16 +3672,16 @@
 	.chat-card-desc     { font-size: 22rpx; color: #999; margin-top: 6rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 	.chat-card:active   { opacity: 0.85; }
 
-	.chat-typing     { padding: 24rpx 32rpx; }
-	.typing-dots     { display: flex; align-items: center; gap: 8rpx; }
-	.typing-dots .dot               { width: 12rpx; height: 12rpx; background: #999; border-radius: 50%; animation: typing-bounce 1.2s ease-in-out infinite; }
-	.typing-dots .dot:nth-child(2)  { animation-delay: 0.2s; }
-	.typing-dots .dot:nth-child(3)  { animation-delay: 0.4s; }
+	/* Markdown 渲染内容 */
+	.md-content { font-size: 28rpx; line-height: 1.7; }
 
-	@keyframes typing-bounce {
-	0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-	30%            { transform: translateY(-8rpx); opacity: 1; }
-	}
+	/* 回到最新消息按钮 */
+	.scroll-bottom-btn   { position: absolute; right: 28rpx; top: calc(120rpx + 24vh); width: 72rpx; height: 72rpx; background: #fff; border-radius: 50%; box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; z-index: 10; }
+	.scroll-bottom-btn:active { opacity: 0.85; }
+	.scroll-bottom-icon  { font-size: 36rpx; color: #4CAF50; font-weight: bold; line-height: 1; }
+
+.chat-typing     { padding: 24rpx 32rpx; }
+.chat-typing .wait-text { font-size: 26rpx; color: #999; }
 
 
 	.chat-quick-questions       { display: flex; gap: 16rpx; padding: 0 24rpx 16rpx; flex-shrink: 0; flex-wrap: wrap; }
@@ -3578,6 +3741,11 @@
 	height: 50rpx;
 	}
 
+
+
+	.chat-send-disabled  { background: #e8e8e8; color: #bbb; pointer-events: none; }
+	.chat-send-active    { background: linear-gradient(135deg, #EE281E, #EE281E); color: #fff; box-shadow: 0 4rpx 12rpx rgba(76,175,80,0.35); }
+	.chat-send-active:active { background: linear-gradient(135deg, #EE281E, #EE281E); box-shadow: 0 2rpx 6rpx rgba(76,175,80,0.25); transform: scale(0.96); }
 	.chat-send-btn-t{
 	flex-shrink: 0;
 	color:#EE281E;
@@ -3594,10 +3762,6 @@
 	min-width: 100rpx;
 	height: 50rpx;
 	}
-
-	.chat-send-disabled  { background: #e8e8e8; color: #bbb; pointer-events: none; }
-	.chat-send-active    { background: linear-gradient(135deg, #EE281E, #EE281E); color: #fff; box-shadow: 0 4rpx 12rpx rgba(76,175,80,0.35); }
-	.chat-send-active:active { background: linear-gradient(135deg, #EE281E, #EE281E); box-shadow: 0 2rpx 6rpx rgba(76,175,80,0.25); transform: scale(0.96); }
 
 
 </style>
